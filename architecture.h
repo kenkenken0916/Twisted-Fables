@@ -163,7 +163,7 @@ CHOOSE_MOVE                   int32_t      choose moves
                                             4:use a skill card, 5:use a special card, 6:buy a card,
                                             7:metamorphosis, 8:charactor special move,9:drop poison
                                             10:end)
-BUY_CARD_TYPE                 int32_t      -1,-2,-3 meaning skill(atk/def/mov), 1~10 meaning basic(atk/def/mov/general)
+BUY_CARD_TYPE                 int32_t      -1,-2,-3 meaning skill(atk/def/mov), 1~10 meaning basic(atk(1-3)/def(4-6)/mov(7-9)/general(10))
 
 REMOVE_HG                     int32_t      for remove card, choose hand or graveyard(negtive:graveyard, positive:hand, value:index of card, **1 base**)
 DROP_H                        int32_t      for drop card, choose hand(value:index of card, **1 base**)

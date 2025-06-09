@@ -1,0 +1,16 @@
+# Compiled objects
+*.o
+*.exe
+
+# Debug files
+*.log
+
+# IDE specific files
+.vscode/
+.vs/
+*.suo
+*.user
+
+# System specific files
+.DS_Store
+Thumbs.db

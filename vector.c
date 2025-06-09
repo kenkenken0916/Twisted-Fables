@@ -1,6 +1,17 @@
 #include "vector.h"
 
-vector initVector() {
+void vector_init(vector* vec) {
+    if (vec == NULL) return;
+    vec->SIZE = 0;
+    memset(vec->array, 0, sizeof(vec->array));
+}
+
+void vector_pushback(vector* vec, int32_t val) {
+    if (vec == NULL || vec->SIZE >= 256) return;
+    vec->array[vec->SIZE++] = val;
+}
+
+vector initVector(void) {
     vector vec;
     vec.SIZE = 0;
     memset(vec.array, 0, sizeof(vec.array));
@@ -21,6 +32,11 @@ void popbackVector(vector* vec) {
     if (vec->SIZE > 0) {
         vec->SIZE--;
     }
+}
+
+void vector_popback(vector* vec) {
+    if (vec == NULL || vec->SIZE == 0) return;
+    vec->SIZE--;
 }
 
 void clearVector(vector* vec) {

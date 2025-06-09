@@ -14,13 +14,16 @@ typedef struct _vector {
     uint32_t SIZE;
 } vector;
 
-vector initVector();
+vector initVector(void);
 void pushbackVector(vector* vec, int32_t val);
 void popbackVector(vector* vec);
 void clearVector(vector* vec);
 void eraseVector(vector* vec, int index);
+void vector_popback(vector* vec);
 
 // 新增的功能
+void vector_init(vector* vec);
+void vector_pushback(vector* vec, int32_t val);
 int32_t atVector(vector* vec, int index);
 void setVector(vector* vec, int index, int32_t val);
 int findVector(vector* vec, int32_t val);
@@ -28,5 +31,6 @@ void insertVector(vector* vec, int index, int32_t val);
 bool isEmptyVector(vector* vec);
 void resizeVector(vector* vec, uint32_t newSize);
 void printVector(vector* vec);
+void shuffle_deck(vector* vec);
 
 #endif // _VECTOR_H

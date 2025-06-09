@@ -1,25 +1,21 @@
-#ifndef _CLIENT_H
-#define _CLIENT_H
-#include <arpa/inet.h>
-#include <errno.h>
-#include <limits.h>
-#include <math.h>
-#include <netinet/in.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
+#ifndef CLIENT_H
+#define CLIENT_H
 
-#include "architecture.h"
-#include "vector.h"
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <arpa/inet.h>
+    #include <netinet/in.h>
+    #include <sys/socket.h>
+#endif
+
+#include <stddef.h>
+#include "game_state.h"
+
 void init_client();
 void receive(game *game_status);
-void send_data(void *data, size_t size);
+void send_data(const void *data, size_t size);  // 修改為 const void*
 void destroy_client();
 
-#endif
+#endif /* CLIENT_H */

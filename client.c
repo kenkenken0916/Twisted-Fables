@@ -1,7 +1,18 @@
 #include "client.h"
+#include <stdio.h>
+
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #define close closesocket
+#else
+    #include <unistd.h>
+#endif
+
 static int client_socket;
 static const int PORT = 8080;
 static const char *ip = "192.168.1.3";
+
 void init_client() {
     struct sockaddr_in server_address;
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -19,9 +30,24 @@ void init_client() {
     }
 }
 
-void receive(game *game_status) { ssize_t bytes_received = read(client_socket, (void *)game_status, sizeof(game)); }
-void send_data(void *data, size_t size) {  // send(&指定的東西, sizeof(指定的東西))
-    ssize_t bytes_sent = write(client_socket, data, size);
+void receive(game *game_status) {
+    #ifdef _WIN32
+        int bytes_received = recv(client_socket, (char *)game_status, sizeof(game), 0);
+        (void)bytes_received;  // 避免警告
+    #else
+        ssize_t bytes_received = read(client_socket, (void *)game_status, sizeof(game));
+        (void)bytes_received;  // 避免警告
+    #endif
+}
+
+void send_data(const void *data, size_t size) {
+    #ifdef _WIN32
+        int bytes_sent = send(client_socket, (const char *)data, (int)size, 0);
+        (void)bytes_sent;  // 避免警告
+    #else
+        ssize_t bytes_sent = write(client_socket, data, size);
+        (void)bytes_sent;  // 避免警告
+    #endif
 }
 
 void destroy_client() { close(client_socket); }
