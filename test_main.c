@@ -2,7 +2,7 @@
 #include "test_system.h"
 #include "debug_log.h"
 
-int main() {
+int main(void) {
     printf("=== 扭曲寓言測試系統 ===\n\n");
     
     TestResult result = run_all_tests();

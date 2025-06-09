@@ -57,11 +57,4 @@ bool match_girl_skill(game* gameState, int32_t skillCard);
 bool dorothy_skill(game* gameState, int32_t skillCard);
 bool scheherazade_skill(game* gameState, int32_t skillCard);
 
-// 卡牌相關函數聲明
-int32_t get_card_value(int32_t cardId);
-int32_t get_skill_cost(int32_t skillCard);
-bool needs_awakening(int32_t skillCard);
-bool needs_ki(int32_t skillCard);
-int32_t required_ki(int32_t skillCard);
-
 #endif // _CHARACTER_SYSTEM_H

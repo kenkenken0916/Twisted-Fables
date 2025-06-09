@@ -25,28 +25,28 @@ void shuffle_deck(vector* deck) {
     DEBUG_LOG("洗牌完成");
 }
 
-bool draw_card(player* player, int count) {
+bool draw_card(player* p, int count) {
     DEBUG_LOG("嘗試抽取%d張牌", count);
     
     for (int i = 0; i < count; i++) {
         // 檢查牌堆是否為空
-        if (player->deck.SIZE == 0) {
+        if (p->deck.SIZE == 0) {
             // 如果棄牌堆也是空的，無法抽牌
-            if (player->graveyard.SIZE == 0) {
+            if (p->graveyard.SIZE == 0) {
                 ERROR_LOG("無法抽牌：牌堆和棄牌堆都是空的");
                 return false;
             }
             
             // 將棄牌堆洗入牌堆
             INFO_LOG("牌堆空，從棄牌堆重組");
-            move_all_cards(&player->graveyard, &player->deck);
-            shuffle_deck(&player->deck);
+            move_all_cards(&p->graveyard, &p->deck);
+            shuffle_deck(&p->deck);
         }
         
         // 抽一張牌
-        int32_t card = player->deck.array[player->deck.SIZE - 1];
-        vector_pushback(&player->hand, card);
-        vector_popback(&player->deck);
+        int32_t card = p->deck.array[p->deck.SIZE - 1];
+        vector_pushback(&p->hand, card);
+        vector_popback(&p->deck);
         
         DEBUG_LOG("抽到卡片：%d", card);
     }
@@ -94,41 +94,41 @@ bool is_in_range(game* gameState, int attacker_id, int target_id, int range) {
     return distance <= range;
 }
 
-bool has_enough_energy(player* player, int cost) {
-    if (player->energy < cost) {
-        DEBUG_LOG("能量不足：需要%d，現有%d", cost, player->energy);
+bool has_enough_energy(player* p, int cost) {
+    if (p->energy < cost) {
+        DEBUG_LOG("能量不足：需要%d，現有%d", cost, p->energy);
         return false;
     }
     return true;
 }
 
-void adjust_life(player* player, int32_t amount) {
-    if (!player) return;
+void adjust_life(player* p, int32_t amount) {
+    if (!p) return;
 
-    if (amount <= -1 && player->life > 0) {  // 使用 -1 代替 0
+    if (amount <= -1 && p->life > 0) {  // 使用 -1 代替 0
         uint32_t abs_amount = (uint32_t)(-amount);
-        if (abs_amount > player->life) {
-            player->life = 0;
+        if (abs_amount > p->life) {
+            p->life = 0;
         } else {
-            player->life -= abs_amount;
+            p->life -= abs_amount;
         }
     } else if (amount > 0) {
-        player->life += (uint32_t)amount;
+        p->life += (uint32_t)amount;
     }
 }
 
-void adjust_defense(player* player, int32_t amount) {
-    if (!player) return;
+void adjust_defense(player* p, int32_t amount) {
+    if (!p) return;
 
-    if (amount <= -1 && player->defense > 0) {  // 使用 -1 代替 0
+    if (amount <= -1 && p->defense > 0) {  // 使用 -1 代替 0
         uint32_t abs_amount = (uint32_t)(-amount);
-        if (abs_amount > player->defense) {
-            player->defense = 0;
+        if (abs_amount > p->defense) {
+            p->defense = 0;
         } else {
-            player->defense -= abs_amount;
+            p->defense -= abs_amount;
         }
     } else if (amount > 0) {
-        player->defense += (uint32_t)amount;
+        p->defense += (uint32_t)amount;
     }
 }
 

@@ -3,9 +3,6 @@
 
 #include "architecture.h"
 
-// 洗牌函數
-void shuffle_deck(vector* deck);
-
 // 抽牌函數
 bool draw_card(player* player, int count);
 
