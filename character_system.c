@@ -4,15 +4,15 @@
 // Character base attributes definition
 static const CharacterBase characterData[] = {
     { 30, 6, 15, "Little Red Riding Hood", "A ranged attacker specializing in archery" },
-    { 30, 8, 15, "Snow White", "A controller using poison tactics" },
-    { 35, 6, 20, "Sleeping Beauty", "Can switch between sleep and awakened states" },
-    { 30, 6, 15, "Alice", "A versatile character who can change identities" },
-    { 30, 8, 15, "Mulan", "Uses Ki energy to enhance abilities" },
-    { 25, 10, 15, "Princess Kaguya", "Excels in defense and counter-attacks" },
-    { 30, 6, 15, "The Little Mermaid", "Controls the field with tentacles" },
-    { 25, 6, 10, "The Little Match Girl", "Uses matches for burn attacks" },
-    { 30, 6, 15, "Dorothy", "A combo master who can chain attacks" },
-    { 30, 6, 15, "Scheherazade", "A tactician using destiny tokens" }
+    { 34, 6, 17, "Snow White", "A controller using poison tactics" },
+    { 42, 6, 21, "Sleeping Beauty", "Can switch between sleep and awakened states" },
+    { 32, 6, 16, "Alice", "A versatile character who can change identities" },
+    { 34, 3, 17, "Mulan", "Uses Ki energy to enhance abilities" },
+    { 32, 6, 16, "Princess Kaguya", "Excels in defense and counter-attacks" },
+    { 36, 3, 18, "The Little Mermaid", "Controls the field with tentacles" },
+    { 36, 6, 18, "The Little Match Girl", "Uses matches for burn attacks" },
+    { 40, 6, 20, "Dorothy", "A combo master who can chain attacks" },
+    { 36, 6, 18, "Scheherazade", "A tactician using destiny tokens" }
 };
 
 void init_character(game* gameState, int playerIndex, CharacterID charId) {
