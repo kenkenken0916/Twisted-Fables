@@ -103,12 +103,36 @@ void init_basic_cards(game *gameState)
         {
             vector_init(&gameState->basicBuyDeck[type][level]);
 
-            // 根據不同類型和等級填充牌組
-            int cardCount = (type == 3) ? 6 : 18; // 通用牌較少
-            for (int i = 0; i < cardCount; i++)
+            // 根據不同類型填充牌組
+            if (type == 3)
+            { // 通用牌
+                if (level == 0)
+                { // 只有LV1通用牌
+                    for (int i = 0; i < 6; i++)
+                    {
+                        vector_pushback(&gameState->basicBuyDeck[type][level], 10);
+                    }
+                }
+            }
+            else
             {
-                int32_t cardId = (type * 1000) + (level * 100) + i;
-                vector_pushback(&gameState->basicBuyDeck[type][level], cardId);
+                int cardId;
+                switch (type)
+                {
+                case 0:                 // 攻擊牌
+                    cardId = level + 1; // LV1=1, LV2=2, LV3=3
+                    break;
+                case 1:                 // 防禦牌
+                    cardId = level + 4; // LV1=4, LV2=5, LV3=6
+                    break;
+                case 2:                 // 移動牌
+                    cardId = level + 7; // LV1=7, LV2=8, LV3=9
+                    break;
+                }
+                for (int i = 0; i < 18; i++)
+                {
+                    vector_pushback(&gameState->basicBuyDeck[type][level], cardId);
+                }
             }
         }
     }

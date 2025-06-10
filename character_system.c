@@ -106,12 +106,12 @@ void setup_initial_deck(player *p)
     // 添加基本牌
     for (int i = 0; i < 3; i++)
     {
-        // 等級1的攻擊牌
-        vector_pushback(&p->deck, 100 + i);
-        // 等級1的防禦牌
-        vector_pushback(&p->deck, 1100 + i);
-        // 等級1的移動牌
-        vector_pushback(&p->deck, 2100 + i);
+        // 等級1攻擊牌
+        vector_pushback(&p->deck, 1);
+        // 等級1防禦牌
+        vector_pushback(&p->deck, 4);
+        // 等級1移動牌
+        vector_pushback(&p->deck, 7);
     }
 
     // 添加角色特有的技能牌
@@ -119,63 +119,63 @@ void setup_initial_deck(player *p)
     {
     case CHAR_RED_HOOD:
         // 添加快速射擊
-        vector_pushback(&p->attackSkill, 4001);
+        vector_pushback(&p->attackSkill, 11);
         // 添加能量護盾
-        vector_pushback(&p->defenseSkill, 5001);
+        vector_pushback(&p->defenseSkill, 14);
         break;
 
     case CHAR_SNOW_WHITE:
-        // 添加毒藥相關技能
-        vector_pushback(&p->attackSkill, 4101);
-        vector_pushback(&p->defenseSkill, 5101);
+        vector_pushback(&p->attackSkill, 23);
+        vector_pushback(&p->defenseSkill, 26);
+        vector_pushback(&p->moveSkill, 29);
         break;
 
     case CHAR_SLEEPING:
-        // 睡美人的技能牌
-        vector_pushback(&p->attackSkill, 4201);
-        vector_pushback(&p->defenseSkill, 5201);
+        vector_pushback(&p->attackSkill, 35);
+        vector_pushback(&p->defenseSkill, 38);
+        vector_pushback(&p->moveSkill, 41);
         break;
 
     case CHAR_ALICE:
-        // 愛麗絲的技能牌
-        vector_pushback(&p->attackSkill, 4301);
-        vector_pushback(&p->defenseSkill, 5301);
+        vector_pushback(&p->attackSkill, 47);
+        vector_pushback(&p->defenseSkill, 50);
+        vector_pushback(&p->moveSkill, 53);
         break;
 
     case CHAR_MULAN:
-        // 花木蘭的技能牌
-        vector_pushback(&p->attackSkill, 4401);
-        vector_pushback(&p->moveSkill, 6401);
+        vector_pushback(&p->attackSkill, 59);
+        vector_pushback(&p->defenseSkill, 62);
+        vector_pushback(&p->moveSkill, 65);
         break;
 
     case CHAR_KAGUYA:
-        // 輝夜姬的技能牌
-        vector_pushback(&p->defenseSkill, 5501);
-        vector_pushback(&p->moveSkill, 6501);
+        vector_pushback(&p->attackSkill, 71);
+        vector_pushback(&p->defenseSkill, 74);
+        vector_pushback(&p->moveSkill, 77);
         break;
 
     case CHAR_MERMAID:
-        // 美人魚的技能牌
-        vector_pushback(&p->attackSkill, 4601);
-        vector_pushback(&p->moveSkill, 6601);
+        vector_pushback(&p->attackSkill, 83);
+        vector_pushback(&p->defenseSkill, 86);
+        vector_pushback(&p->moveSkill, 89);
         break;
 
     case CHAR_MATCH_GIRL:
-        // 賣火柴女孩的技能牌
-        vector_pushback(&p->attackSkill, 4701);
-        vector_pushback(&p->attackSkill, 4702);
+        vector_pushback(&p->attackSkill, 95);
+        vector_pushback(&p->defenseSkill, 98);
+        vector_pushback(&p->moveSkill, 101);
         break;
 
     case CHAR_DOROTHY:
-        // 桃樂絲的技能牌
-        vector_pushback(&p->attackSkill, 4801);
-        vector_pushback(&p->moveSkill, 6801);
+        vector_pushback(&p->attackSkill, 107);
+        vector_pushback(&p->defenseSkill, 110);
+        vector_pushback(&p->moveSkill, 113);
         break;
 
     case CHAR_SCHEHERAZADE:
-        // 山魯佐德的技能牌
-        vector_pushback(&p->attackSkill, 4901);
-        vector_pushback(&p->defenseSkill, 5901);
+        vector_pushback(&p->attackSkill, 119);
+        vector_pushback(&p->defenseSkill, 122);
+        vector_pushback(&p->moveSkill, 125);
         break;
 
     default:
@@ -183,6 +183,7 @@ void setup_initial_deck(player *p)
         break;
     }
 
+    // 洗混牌堆
     shuffle_deck(&p->deck);
 }
 
