@@ -1,5 +1,6 @@
 #ifndef _ARCHITECTURE_H
 #define _ARCHITECTURE_H
+
 #include <limits.h>
 #include <math.h>
 #include <stdbool.h>
@@ -11,9 +12,11 @@
 
 #include "vector.h"
 
+#define WIDTH 9
+
 typedef struct _player {
-    int8_t team;  // for 2v2 mode
-    uint8_t locate[2];
+    int8_t team;
+    uint8_t locate[2]; 
     uint8_t character;
     uint8_t maxlife;
     uint8_t life;
@@ -43,7 +46,7 @@ typedef struct _player {
     // sleeping Beauty 2
     struct {
         uint32_t AWAKEN_TOKEN;
-        int8_t AWAKEN;  // awaken(1) or sleep(0)
+        int8_t AWAKEN;  // 1:醒著 0:沉睡
         int8_t dayNightmareDrawRemind;
         int32_t atkRise;
         int32_t atkRiseTime;
@@ -52,7 +55,7 @@ typedef struct _player {
 
     // alice 3
     struct {
-        uint8_t identity;  // 0:none 1:紅心皇后 2:瘋帽子 3:柴郡貓
+        uint8_t identity;  // 0:無, 1:紅心皇后, 2:瘋帽子, 3:柴郡貓
         int32_t riseBasic;
         int32_t restartTurn;
         int32_t havedrestart;
@@ -93,7 +96,9 @@ typedef struct _player {
         vector destiny_TOKEN_type;  // 1:blue, 2:red
         int8_t selectToken;
     } scheherazade;
-} player;
+} Player;
+
+/* 狀態列舉 */
 enum state {
     CHOOSE_IDENTITY = 0,
     CHOOSE_TENTACLE_LOCATION,
@@ -151,6 +156,23 @@ enum state {
     GET_ULTRA,
     USE_METAMORPHOSIS,
 };
+
+/* TUI 相關定義（請注意 tui.h 為另外定義的檔案，需自行提供）*/
+#include "tui.h"
+#include <ncurses.h>
+#include <unistd.h>
+#include <signal.h>
+
+extern volatile sig_atomic_t running;
+
+/* 函式原型 */
+void handle_sigint(int sig);
+int tui_init(TUI *tui);
+void tui_cleanup(TUI *tui);
+void draw_event_log(WINDOW *win, const char *log[], int log_size);
+void draw_positions(WINDOW *win, Player p1, Player p2);
+void draw_stats(WINDOW *win, Player p1, Player p2);
+void tui_update(TUI *tui, Player p1, Player p2, const char *logs[], int log_size);
 /*
 state                         return type  meaning
 CHOOSE_IDENTITY               int8_t       1:紅心皇后 2:瘋帽子 3:柴郡貓
@@ -222,7 +244,8 @@ TOKEN_GOAL                    int8_t       choose location of the token you choo
 GET_ULTRA                     int8_t       choose a special card to hand when your life lower than gate first time
 USE_METAMORPHOSIS             int32_t      trigger a active metamorphosis(return index of metamorphosis, 0 base)
 */
-typedef struct _game {
+/*
+typedef struct _game { 2v2 MODE
     player players[4];
     int8_t now_turn_player_id;
     int8_t playerMode;  // 1v1 MODE(0) or 2v2 MODE(1)
@@ -243,6 +266,7 @@ typedef struct _game {
     int32_t nowUsingCardID;
     vector nowShowingCards;
     int32_t totalDamage;
-} game;
+} game; 
+*/
 
 #endif
