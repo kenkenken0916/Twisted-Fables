@@ -10,11 +10,18 @@ void transition_to_next_state(game* gameState) {
     
     switch (gameState->status) {
         case CHOOSE_IDENTITY:
-            if (gameState->now_turn_player_id == 1) {
+            if (gameState->now_turn_player_id == 1 && gameState->players[1].character != UINT8_MAX) {
+                // 當第二個玩家也選完角色後，進入遊戲階段
                 gameState->status = CHOOSE_MOVE;
                 gameState->now_turn_player_id = 0;
+                // 兩個玩家都選完角色才進行抽牌
                 initial_draw(gameState);
-            } else {
+            } else if (gameState->now_turn_player_id == 0 && gameState->players[0].character != UINT8_MAX) {
+                // 第一個玩家選完後換第二個玩家選
+                gameState->now_turn_player_id = 1;
+                printf("1. Little Red Riding Hood\n2. Snow White\n3. Sleeping Beauty\n4. Alice\n");
+                printf("5. Mulan\n6. Princess Kaguya\n7. The Little Mermaid\n8. The Little Match Girl\n");
+                printf("9. Dorothy\n10. Scheherazade\n");
                 gameState->now_turn_player_id = 1;
             }
             break;

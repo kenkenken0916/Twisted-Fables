@@ -1,0 +1,86 @@
+# Development Log - Twisted Fables
+
+## 2025-06-11: Character Selection System Fix
+
+### Issues Fixed:
+1. Character Selection System Bug
+   - Problem: Character 1 (Little Red Riding Hood) couldn't be selected
+   - Root Cause: Code was using 0 both as Little Red Riding Hood's ID and as "no character selected" state
+   - Files Affected:
+     - game_logic.c
+     - game_init.c
+     - game_state.c
+
+### Changes Made:
+
+1. Changed Character Selection State Tracking
+   ```c
+   // Changed from using 0 to using UINT8_MAX for "no character selected"
+   p->character = UINT8_MAX;  // in game_init.c
+   ```
+
+2. Fixed Character Selection Validation
+   ```c
+   // Old code (problematic)
+   if (gs->players[gs->now_turn_player_id].character != 0) {
+       return;
+   }
+
+   // New code
+   if (gs->players[gs->now_turn_player_id].character != UINT8_MAX) {
+       return;
+   }
+   ```
+
+3. Fixed Game End Check Logic
+   - Modified game end check to ensure both players must select characters
+   - Added proper validation to prevent premature game end
+   - Updated state transition logic for character selection phase
+
+### Current State:
+1. Character Selection:
+   - Both players can now select any character including Little Red Riding Hood (ID 0)
+   - Proper turn switching between players during character selection
+   - Character stats and initialization working correctly
+
+2. Game State Transitions:
+   - Character selection → Player 2's turn → Main game phase
+   - Initial hand dealt correctly after both players select characters
+
+3. Known Working Features:
+   - Character selection for both players
+   - Initial game setup
+   - Basic turn structure
+   - Hand card display
+   - Action selection menu
+
+### TODO:
+1. Test and verify combat system
+2. Implement card buying system
+3. Complete special abilities for each character
+4. Add victory condition checks
+5. Implement card combination system
+6. Add proper game end handling
+
+### Tests Performed:
+1. Character Selection Test
+   - Selected Little Red Riding Hood (Player 1)
+   - Selected Snow White (Player 2)
+   - Verified correct stats and initial hands
+
+2. Basic Gameplay Test
+   - Verified turn system
+   - Checked action menu display
+   - Confirmed hand card display
+
+### Notes:
+- The fix for character selection required changing the "no character selected" state from 0 to UINT8_MAX throughout the codebase
+- State transitions are now properly handling character selection phase
+- Initial game setup is working as intended
+
+### Next Steps:
+1. Complete combat system implementation
+2. Add card buying functionality
+3. Implement character special abilities
+4. Add proper game end conditions
+5. Implement full turn cycle logic

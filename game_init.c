@@ -51,7 +51,7 @@ void init_player(player *p)
     p->team = 0;
     p->locate[0] = 0;
     p->locate[1] = 0;
-    p->character = 0;
+    p->character = UINT8_MAX; // Use UINT8_MAX to indicate no character selected
     p->maxlife = 0;
     p->life = 0;
     p->maxdefense = 0;
