@@ -49,23 +49,29 @@ void tui_cleanup(TUI *tui) {
 }
 
 void draw_event_log(WINDOW *win, const char *log[], int log_size) {
-    werase(win);
-    box(win, 0, 0);
+    werase(win);  // 完全清除視窗
+    box(win, 0, 0);  // 重新繪製邊框
+    
+    // 重新繪製所有日誌內容
     for (int i = 0; i < log_size; ++i) {
         mvwprintw(win, i + 1, 1, "%s", log[i]);
     }
-    wrefresh(win);
+    
+    wrefresh(win);  // 強制重新繪製到螢幕
 }
 
 void draw_positions(WINDOW *win, Player p1, Player p2) {
-    werase(win);
-    box(win, 0, 0);
+    werase(win);  // 完全清除視窗
+    box(win, 0, 0);  // 重新繪製邊框
+    
+    // 重新繪製位置標籤
     mvwprintw(win, 1, 1, "0 1 2 3 4 5 6 7 8");
 
+    // 重新繪製所有位置
     for (int i = 0; i < WIDTH; ++i) {
         char c = ' ';
         if (i == p1.pos && i == p2.pos)
-            c = 'X'; // Both players on same tile
+            c = 'X'; // 兩個玩家在同一格
         else if (i == p1.pos)
             c = '1';
         else if (i == p2.pos)
@@ -73,21 +79,29 @@ void draw_positions(WINDOW *win, Player p1, Player p2) {
 
         mvwprintw(win, 2, 1 + i * 2, "%c", c);
     }
-    wrefresh(win);
+    
+    wrefresh(win);  // 強制重新繪製到螢幕
 }
 
 void draw_stats(WINDOW *win, Player p1, Player p2) {
-    werase(win);
-    box(win, 0, 0);
+    werase(win);  // 完全清除視窗
+    box(win, 0, 0);  // 重新繪製邊框
+    
+    // 重新繪製玩家狀態
     mvwprintw(win, 1, 1, "P1 HP: %2d  MP: %d  DEF: %d", p1.hp, p1.mp, p1.def);
     mvwprintw(win, 2, 1, "P2 HP: %2d  MP: %d  DEF: %d", p2.hp, p2.mp, p2.def);
-    wrefresh(win);
+    
+    wrefresh(win);  // 強制重新繪製到螢幕
 }
 
 void tui_update(TUI *tui, Player p1, Player p2, const char *logs[], int log_size) {
+    // 每次調用都完全重新繪製所有視窗
     draw_event_log(tui->event_win, logs, log_size);
     draw_positions(tui->pos_win, p1, p2);
     draw_stats(tui->stat_win, p1, p2);
+    
+    // 確保所有變更都顯示到螢幕上
+    refresh();
 }
 
 // Example main function showing how to use the TUI
