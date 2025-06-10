@@ -15,8 +15,8 @@ RELEASE_FLAGS = -O2
 DEBUG_FLAGS = -O0 -DDEBUG
 
 # 目標執行檔
-GAME_TARGET = twisted_fables.exe
-TEST_TARGET = test.exe
+GAME_TARGET = twisted_fables
+TEST_TARGET = test
 
 # 源文件
 COMMON_SOURCES = vector.c game_init.c game_logic.c game_state.c card_system.c \
@@ -49,7 +49,7 @@ $(TEST_TARGET): $(TEST_OBJECTS)
 
 # 清理
 clean:
-	del /Q *.o *.exe test.log
+	rm -f *.o twisted_fables test test.log
 
 # 運行測試
 test: $(TEST_TARGET)

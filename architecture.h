@@ -12,11 +12,16 @@
 
 #include "vector.h"
 
+// Forward declarations
+typedef struct _game game;
+typedef struct _player player;
+
 #define WIDTH 9
 
-typedef struct _player {
+struct _player
+{
     int8_t team;
-    uint8_t locate[2]; 
+    uint8_t locate[2];
     uint8_t character;
     uint8_t maxlife;
     uint8_t life;
@@ -34,19 +39,22 @@ typedef struct _player {
     vector moveSkill;
     vector specialDeck;
     // Little Red Riding Hood 0
-    struct {
+    struct
+    {
         int32_t saveCard[3];
     } redHood;
 
     // Snow White 1
-    struct {
+    struct
+    {
         vector remindPosion;
     } snowWhite;
 
     // sleeping Beauty 2
-    struct {
+    struct
+    {
         uint32_t AWAKEN_TOKEN;
-        int8_t AWAKEN;  // 1:醒著 0:沉睡
+        int8_t AWAKEN; // 1:醒著 0:沉睡
         int8_t dayNightmareDrawRemind;
         int32_t atkRise;
         int32_t atkRiseTime;
@@ -54,52 +62,60 @@ typedef struct _player {
     } sleepingBeauty;
 
     // alice 3
-    struct {
-        uint8_t identity;  // 0:無, 1:紅心皇后, 2:瘋帽子, 3:柴郡貓
+    struct
+    {
+        uint8_t identity; // 0:無, 1:紅心皇后, 2:瘋帽子, 3:柴郡貓
         int32_t riseBasic;
         int32_t restartTurn;
         int32_t havedrestart;
     } alice;
 
     // Mulan 4
-    struct {
+    struct
+    {
         uint32_t KI_TOKEN;
         uint8_t extraCard;
         uint8_t extraDraw;
     } mulan;
 
     // kaguya 5
-    struct {
+    struct
+    {
         int8_t useDefenseAsATK;
         int8_t useMoveTarget;
     } kaguya;
 
     // mermaid 6
-    struct {
+    struct
+    {
     } mermaid;
 
     // Match Girl 7
-    struct {
+    struct
+    {
         uint32_t remindMatch;
         uint32_t pushedMatch;
     } matchGirl;
 
     // dorothy 8
-    struct {
+    struct
+    {
         uint32_t COMBO_TOKEN;
         int8_t canCombo;
     } dorothy;
 
     // Scheherazade 9
-    struct {
+    struct
+    {
         vector destiny_TOKEN_locate;
-        vector destiny_TOKEN_type;  // 1:blue, 2:red
+        vector destiny_TOKEN_type; // 1:blue, 2:red
         int8_t selectToken;
     } scheherazade;
-} Player;
+};
 
 /* 狀態列舉 */
-enum state {
+enum state
+{
     CHOOSE_IDENTITY = 0,
     CHOOSE_TENTACLE_LOCATION,
     CHOOSE_SPECIAL_CARD,
@@ -158,21 +174,22 @@ enum state {
 };
 
 /* TUI 相關定義（請注意 tui.h 為另外定義的檔案，需自行提供）*/
-#include "tui.h"
-#include <ncurses.h>
+// #include "tui.h"  // Commented out for now to use command line interface
+// #include <ncurses.h>  // Commented out for now
 #include <unistd.h>
 #include <signal.h>
 
-extern volatile sig_atomic_t running;
+//extern volatile sig_atomic_t running;
 
 /* 函式原型 */
-void handle_sigint(int sig);
-int tui_init(TUI *tui);
-void tui_cleanup(TUI *tui);
-void draw_event_log(WINDOW *win, const char *log[], int log_size);
-void draw_positions(WINDOW *win, Player p1, Player p2);
-void draw_stats(WINDOW *win, Player p1, Player p2);
-void tui_update(TUI *tui, Player p1, Player p2, const char *logs[], int log_size);
+//void handle_sigint(int sig);
+// TUI functions commented out for now to use command line interface
+// int tui_init(TUI *tui);
+// void tui_cleanup(TUI *tui);
+// void draw_event_log(WINDOW *win, const char *log[], int log_size);
+// void draw_positions(WINDOW *win, Player p1, Player p2);
+// void draw_stats(WINDOW *win, Player p1, Player p2);
+// void tui_update(TUI *tui, Player p1, Player p2, const char *logs[], int log_size);
 /*
 state                         return type  meaning
 CHOOSE_IDENTITY               int8_t       1:紅心皇后 2:瘋帽子 3:柴郡貓
@@ -244,8 +261,7 @@ TOKEN_GOAL                    int8_t       choose location of the token you choo
 GET_ULTRA                     int8_t       choose a special card to hand when your life lower than gate first time
 USE_METAMORPHOSIS             int32_t      trigger a active metamorphosis(return index of metamorphosis, 0 base)
 */
-/*
-typedef struct _game { 2v2 MODE
+struct _game { // Game structure definition
     player players[4];
     int8_t now_turn_player_id;
     int8_t playerMode;  // 1v1 MODE(0) or 2v2 MODE(1)
@@ -266,7 +282,6 @@ typedef struct _game { 2v2 MODE
     int32_t nowUsingCardID;
     vector nowShowingCards;
     int32_t totalDamage;
-} game; 
-*/
+};
 
 #endif
