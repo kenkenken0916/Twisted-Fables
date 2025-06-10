@@ -35,8 +35,7 @@ int main(void)
 
         // Request player input based on current state
         int32_t choice;
-        printf("\nCurrent State: %d\n", gameState.status);
-        printf("Enter your choice: ");
+        printf("\nEnter your choice: ");
         scanf("%d", &choice);
 
         // Handle player choice

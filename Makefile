@@ -52,7 +52,7 @@ clean:
 	rm -f *.o twisted_fables test test.log
 
 # 運行測試
-test: $(TEST_TARGET)
+testrun: $(TEST_TARGET)
 	.\$(TEST_TARGET)
 
 # 運行遊戲
@@ -64,7 +64,7 @@ help:
 	@echo 可用的命令：
 	@echo make all            - 構建遊戲和測試程式
 	@echo make clean         - 清理所有生成的檔案
-	@echo make test          - 運行測試
+	@echo make testrun          - 運行測試
 	@echo make run           - 運行遊戲
 	@echo make game          - 只構建遊戲
 	@echo make debug         - 構建調試版本
@@ -92,4 +92,4 @@ show-flags:
 	@echo "使用的編譯選項："
 	@echo "CFLAGS = $(CFLAGS)"
 
-.PHONY: all clean test run help game debug
+.PHONY: all clean testrun run help game debug

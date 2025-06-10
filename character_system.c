@@ -103,79 +103,179 @@ void setup_initial_deck(player *p)
 
     DEBUG_LOG("設置玩家%d的初始牌組", p->character + 1);
 
-    // 添加基本牌
+    // 添加基本牌 (3張1階攻擊、3張1階防禦、3張1階移動，共9張)
     for (int i = 0; i < 3; i++)
     {
         // 等級1攻擊牌
-        vector_pushback(&p->deck, 1);
+        vector_pushback(&p->deck, 1); // LV1 Attack card
         // 等級1防禦牌
-        vector_pushback(&p->deck, 4);
+        vector_pushback(&p->deck, 4); // LV1 Defense card
         // 等級1移動牌
-        vector_pushback(&p->deck, 7);
+        vector_pushback(&p->deck, 7); // LV1 Move card
     }
 
-    // 添加角色特有的技能牌
+    // 添加1階技能牌 (每種技能1張，共3張)
     switch (p->character)
     {
     case CHAR_RED_HOOD:
-        // 添加快速射擊
+        // 每種1階技能牌各一張
+        vector_pushback(&p->deck, 11); // 快速射擊 (攻擊)
+        vector_pushback(&p->deck, 14); // 能量護盾 (防禦)
+        vector_pushback(&p->deck, 17); // 彈道噴射 (移動)
+        // 存儲所有技能牌供後續使用
         vector_pushback(&p->attackSkill, 11);
-        // 添加能量護盾
+        vector_pushback(&p->attackSkill, 12);
+        vector_pushback(&p->attackSkill, 13);
         vector_pushback(&p->defenseSkill, 14);
+        vector_pushback(&p->defenseSkill, 15);
+        vector_pushback(&p->defenseSkill, 16);
+        vector_pushback(&p->moveSkill, 17);
+        vector_pushback(&p->moveSkill, 18);
+        vector_pushback(&p->moveSkill, 19);
         break;
 
     case CHAR_SNOW_WHITE:
+        vector_pushback(&p->deck, 23); // 水晶碎片 (1階攻擊)
+        vector_pushback(&p->deck, 26); // 玷污的恩惠 (1階防禦)
+        vector_pushback(&p->deck, 29); // 破碎的幻想 (1階移動)
+        // 存儲所有技能牌
         vector_pushback(&p->attackSkill, 23);
+        vector_pushback(&p->attackSkill, 24);
+        vector_pushback(&p->attackSkill, 25);
         vector_pushback(&p->defenseSkill, 26);
+        vector_pushback(&p->defenseSkill, 27);
+        vector_pushback(&p->defenseSkill, 28);
         vector_pushback(&p->moveSkill, 29);
+        vector_pushback(&p->moveSkill, 30);
+        vector_pushback(&p->moveSkill, 31);
         break;
 
     case CHAR_SLEEPING:
+        vector_pushback(&p->deck, 35); // 心靈震顫 (1階攻擊)
+        vector_pushback(&p->deck, 38); // 爆裂之鎖 (1階防禦)
+        vector_pushback(&p->deck, 41); // 黑暗碰觸 (1階移動)
+        // 存儲所有技能牌
         vector_pushback(&p->attackSkill, 35);
+        vector_pushback(&p->attackSkill, 36);
+        vector_pushback(&p->attackSkill, 37);
         vector_pushback(&p->defenseSkill, 38);
+        vector_pushback(&p->defenseSkill, 39);
+        vector_pushback(&p->defenseSkill, 40);
         vector_pushback(&p->moveSkill, 41);
+        vector_pushback(&p->moveSkill, 42);
+        vector_pushback(&p->moveSkill, 43);
         break;
 
     case CHAR_ALICE:
+        vector_pushback(&p->deck, 47); // 開啟牌局 (1階攻擊)
+        vector_pushback(&p->deck, 50); // 魔力技巧 (1階防禦)
+        vector_pushback(&p->deck, 53); // 詭異的敏捷 (1階移動)
+        // 存儲所有技能牌
         vector_pushback(&p->attackSkill, 47);
+        vector_pushback(&p->attackSkill, 48);
+        vector_pushback(&p->attackSkill, 49);
         vector_pushback(&p->defenseSkill, 50);
+        vector_pushback(&p->defenseSkill, 51);
+        vector_pushback(&p->defenseSkill, 52);
         vector_pushback(&p->moveSkill, 53);
+        vector_pushback(&p->moveSkill, 54);
+        vector_pushback(&p->moveSkill, 55);
         break;
 
     case CHAR_MULAN:
+        vector_pushback(&p->deck, 59); // 不容小覷 (1階攻擊)
+        vector_pushback(&p->deck, 62); // 以靜制動 (1階防禦)
+        vector_pushback(&p->deck, 65); // 永不退縮 (1階移動)
+        // 存儲所有技能牌
         vector_pushback(&p->attackSkill, 59);
+        vector_pushback(&p->attackSkill, 60);
+        vector_pushback(&p->attackSkill, 61);
         vector_pushback(&p->defenseSkill, 62);
+        vector_pushback(&p->defenseSkill, 63);
+        vector_pushback(&p->defenseSkill, 64);
         vector_pushback(&p->moveSkill, 65);
+        vector_pushback(&p->moveSkill, 66);
+        vector_pushback(&p->moveSkill, 67);
         break;
 
     case CHAR_KAGUYA:
+        vector_pushback(&p->deck, 71); // 1階攻擊技能
+        vector_pushback(&p->deck, 74); // 1階防禦技能
+        vector_pushback(&p->deck, 77); // 1階移動技能
+        // 存儲所有技能牌
         vector_pushback(&p->attackSkill, 71);
+        vector_pushback(&p->attackSkill, 72);
+        vector_pushback(&p->attackSkill, 73);
         vector_pushback(&p->defenseSkill, 74);
+        vector_pushback(&p->defenseSkill, 75);
+        vector_pushback(&p->defenseSkill, 76);
         vector_pushback(&p->moveSkill, 77);
+        vector_pushback(&p->moveSkill, 78);
+        vector_pushback(&p->moveSkill, 79);
         break;
 
     case CHAR_MERMAID:
+        vector_pushback(&p->deck, 83); // 1階攻擊技能
+        vector_pushback(&p->deck, 86); // 1階防禦技能
+        vector_pushback(&p->deck, 89); // 1階移動技能
+        // 存儲所有技能牌
         vector_pushback(&p->attackSkill, 83);
+        vector_pushback(&p->attackSkill, 84);
+        vector_pushback(&p->attackSkill, 85);
         vector_pushback(&p->defenseSkill, 86);
+        vector_pushback(&p->defenseSkill, 87);
+        vector_pushback(&p->defenseSkill, 88);
         vector_pushback(&p->moveSkill, 89);
+        vector_pushback(&p->moveSkill, 90);
+        vector_pushback(&p->moveSkill, 91);
         break;
 
     case CHAR_MATCH_GIRL:
+        vector_pushback(&p->deck, 95);  // 1階攻擊技能
+        vector_pushback(&p->deck, 98);  // 1階防禦技能
+        vector_pushback(&p->deck, 101); // 1階移動技能
+        // 存儲所有技能牌
         vector_pushback(&p->attackSkill, 95);
+        vector_pushback(&p->attackSkill, 96);
+        vector_pushback(&p->attackSkill, 97);
         vector_pushback(&p->defenseSkill, 98);
+        vector_pushback(&p->defenseSkill, 99);
+        vector_pushback(&p->defenseSkill, 100);
         vector_pushback(&p->moveSkill, 101);
+        vector_pushback(&p->moveSkill, 102);
+        vector_pushback(&p->moveSkill, 103);
         break;
 
     case CHAR_DOROTHY:
+        vector_pushback(&p->deck, 107); // 1階攻擊技能
+        vector_pushback(&p->deck, 110); // 1階防禦技能
+        vector_pushback(&p->deck, 113); // 1階移動技能
+        // 存儲所有技能牌
         vector_pushback(&p->attackSkill, 107);
+        vector_pushback(&p->attackSkill, 108);
+        vector_pushback(&p->attackSkill, 109);
         vector_pushback(&p->defenseSkill, 110);
+        vector_pushback(&p->defenseSkill, 111);
+        vector_pushback(&p->defenseSkill, 112);
         vector_pushback(&p->moveSkill, 113);
+        vector_pushback(&p->moveSkill, 114);
+        vector_pushback(&p->moveSkill, 115);
         break;
 
     case CHAR_SCHEHERAZADE:
+        vector_pushback(&p->deck, 119); // 1階攻擊技能
+        vector_pushback(&p->deck, 122); // 1階防禦技能
+        vector_pushback(&p->deck, 125); // 1階移動技能
+        // 存儲所有技能牌
         vector_pushback(&p->attackSkill, 119);
+        vector_pushback(&p->attackSkill, 120);
+        vector_pushback(&p->attackSkill, 121);
         vector_pushback(&p->defenseSkill, 122);
+        vector_pushback(&p->defenseSkill, 123);
+        vector_pushback(&p->defenseSkill, 124);
         vector_pushback(&p->moveSkill, 125);
+        vector_pushback(&p->moveSkill, 126);
+        vector_pushback(&p->moveSkill, 127);
         break;
 
     default:
@@ -185,6 +285,8 @@ void setup_initial_deck(player *p)
 
     // 洗混牌堆
     shuffle_deck(&p->deck);
+
+    DEBUG_LOG("牌堆設置完成，共%d張牌", p->deck.SIZE);
 }
 
 bool handle_character_skill(game *gameState, int32_t skillCard)

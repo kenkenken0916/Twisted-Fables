@@ -3,75 +3,85 @@
 #include "game_state.h"
 #include "debug_log.h"
 #include "utils.h"
-#include "game_logic.h"  // 添加此行以訪問 display_game_state
+#include "game_logic.h" // 添加此行以訪問 display_game_state
 
-void transition_to_next_state(game* gameState) {
-    player* current_player = &gameState->players[gameState->now_turn_player_id];
-    
-    switch (gameState->status) {
-        case CHOOSE_IDENTITY:
-            if (gameState->now_turn_player_id == 1 && gameState->players[1].character != UINT8_MAX) {
-                // 當第二個玩家也選完角色後，進入遊戲階段
-                gameState->status = CHOOSE_MOVE;
-                gameState->now_turn_player_id = 0;
-                // 兩個玩家都選完角色才進行抽牌
-                initial_draw(gameState);
-            } else if (gameState->now_turn_player_id == 0 && gameState->players[0].character != UINT8_MAX) {
-                // 第一個玩家選完後換第二個玩家選
-                gameState->now_turn_player_id = 1;
-                printf("1. Little Red Riding Hood\n2. Snow White\n3. Sleeping Beauty\n4. Alice\n");
-                printf("5. Mulan\n6. Princess Kaguya\n7. The Little Mermaid\n8. The Little Match Girl\n");
-                printf("9. Dorothy\n10. Scheherazade\n");
-                gameState->now_turn_player_id = 1;
-            }
-            break;
-            
-        case CHOOSE_MOVE:
-            // 保持在當前狀態，等待玩家選擇行動
-            break;
-            
-        case USE_ATK:
-        case USE_DEF:
-        case USE_MOV:
-            if (current_player->hand.SIZE == 0 || gameState->nowUsingCardID == 0) {
-                gameState->status = CHOOSE_MOVE;
-            }
-            break;
-            
-        case BUY_CARD_TYPE:
+void transition_to_next_state(game *gameState)
+{
+    player *current_player = &gameState->players[gameState->now_turn_player_id];
+
+    switch (gameState->status)
+    {
+    case CHOOSE_IDENTITY:
+        if (gameState->now_turn_player_id == 1 && gameState->players[1].character != UINT8_MAX)
+        {
+            // 當第二個玩家也選完角色後，進入遊戲階段
             gameState->status = CHOOSE_MOVE;
-            break;
-            
+            gameState->now_turn_player_id = 0;
+            // 兩個玩家都選完角色才進行抽牌
+            initial_draw(gameState);
+        }
+        else if (gameState->now_turn_player_id == 0 && gameState->players[0].character != UINT8_MAX)
+        {
+            // 第一個玩家選完後換第二個玩家選
+            gameState->now_turn_player_id = 1;
+            printf("1. Little Red Riding Hood\n2. Snow White\n3. Sleeping Beauty\n4. Alice\n");
+            printf("5. Mulan\n6. Princess Kaguya\n7. The Little Mermaid\n8. The Little Match Girl\n");
+            printf("9. Dorothy\n10. Scheherazade\n");
+            gameState->now_turn_player_id = 1;
+        }
+        break;
+
+    case CHOOSE_MOVE:
+        // 保持在當前狀態，等待玩家選擇行動
+        break;
+
+    case USE_ATK:
+    case USE_DEF:
+    case USE_MOV:
+        if (current_player->hand.SIZE == 0 || gameState->nowUsingCardID == 0)
+        {
+            gameState->status = CHOOSE_MOVE;
+        }
+        break;
+
+    case BUY_CARD_TYPE:
+        gameState->status = CHOOSE_MOVE;
+        break;
+
         // 其他狀態的轉換...
-        
-        default:
-            break;
+
+    default:
+        break;
     }
 }
 
-void handle_start_phase(game* gameState) {
+void handle_start_phase(game *gameState)
+{
     DEBUG_LOG("開始階段");
-    
+
     // 更新遊戲狀態
     gameState->status = CHOOSE_MOVE;
-    
+
     INFO_LOG("開始階段結束");
 }
 
-void handle_cleanup_phase(game* gameState) {
-    player* current_player = &gameState->players[gameState->now_turn_player_id];
-    
+void handle_cleanup_phase(game *gameState)
+{
+    player *current_player = &gameState->players[gameState->now_turn_player_id];
+
     // 將出牌區的牌移到棄牌堆
-    for (uint32_t i = 0; i < current_player->usecards.SIZE; i++) {
+    for (uint32_t i = 0; i < current_player->usecards.SIZE; i++)
+    {
         vector_pushback(&current_player->graveyard, current_player->usecards.array[i]);
     }
     clearVector(&current_player->usecards);
-    
+
     // 重置防禦值
     current_player->defense = 0;
 }
 
-void handle_action_phase(game* gameState) {
+void handle_action_phase(game *gameState)
+{
     // 處理玩家的行動選擇
     display_game_state(gameState);
     printf("\n可用行動:\n");
@@ -88,81 +98,95 @@ void handle_action_phase(game* gameState) {
     printf("10: 結束回合\n");
 }
 
-void handle_focus_action(game* gameState) {
+void handle_focus_action(game *gameState)
+{
     DEBUG_LOG("處理專注動作");
-    
-    player* current_player = &gameState->players[gameState->now_turn_player_id];
-    
+
+    player *current_player = &gameState->players[gameState->now_turn_player_id];
+
     // 專注行動: 抽一張牌並獲得1點能量
     draw_card(current_player, 1);
     current_player->energy += 1;
-    
+
     // 更新遊戲狀態
     gameState->status = CHOOSE_MOVE;
-    
+
     INFO_LOG("專注行動完成: 抽1張牌, +1能量");
 }
 
-void handle_attack_action(game* gameState) {
-    player* current_player = &gameState->players[gameState->now_turn_player_id];
-    
+void handle_attack_action(game *gameState)
+{
+    player *current_player = &gameState->players[gameState->now_turn_player_id];
+
     printf("選擇要使用的攻擊牌 (輸入0結束):\n");
-    for (uint32_t i = 0; i < current_player->hand.SIZE; i++) {
+    for (uint32_t i = 0; i < current_player->hand.SIZE; i++)
+    {
         int32_t card_id = current_player->hand.array[i];
         if (get_card_type(card_id) == CARD_TYPE_BASIC_ATK ||
-            get_card_type(card_id) == CARD_TYPE_BASIC_GENERAL) {
+            get_card_type(card_id) == CARD_TYPE_BASIC_GENERAL)
+        {
             printf("%d: %d (攻擊力: %d)\n", i + 1, card_id, get_card_value(card_id));
         }
     }
 }
 
-void start_turn(game* gameState) {
+void start_turn(game *gameState)
+{
     handle_start_phase(gameState);
     gameState->status = CHOOSE_MOVE;
 }
 
-void end_turn(game* gameState) {
+void end_turn(game *gameState)
+{
     handle_cleanup_phase(gameState);
     gameState->now_turn_player_id = (gameState->now_turn_player_id + 1) % 2;
     start_turn(gameState);
 }
 
-void apply_damage(game* gameState, int target_player, int damage) {
-    player* target = &gameState->players[target_player];
-    
+void apply_damage(game *gameState, int target_player, int damage)
+{
+    player *target = &gameState->players[target_player];
+
     // 先扣除防禦值
-    if (target->defense > 0) {
-        if (target->defense >= damage) {
+    if (target->defense > 0)
+    {
+        if (target->defense >= damage)
+        {
             target->defense -= damage;
             damage = 0;
-        } else {
+        }
+        else
+        {
             damage -= target->defense;
             target->defense = 0;
         }
     }
-    
+
     // 扣除生命值
-    if (damage > 0) {
+    if (damage > 0)
+    {
         target->life = (target->life > damage) ? target->life - damage : 0;
     }
 }
 
-void apply_defense(game* gameState, int target_player, int defense) {
-    player* target = &gameState->players[target_player];
-    
+void apply_defense(game *gameState, int target_player, int defense)
+{
+    player *target = &gameState->players[target_player];
+
     // 增加防禦值，但不超過上限
     int new_defense = target->defense + defense;
     target->defense = (new_defense <= target->maxdefense) ? new_defense : target->maxdefense;
 }
 
-bool check_attack_range(game* gameState, int attacker, int target) {
-    player* attacker_player = &gameState->players[attacker];
-    player* target_player = &gameState->players[target];
-    
+bool check_attack_range(game *gameState, int attacker, int target)
+{
+    player *attacker_player = &gameState->players[attacker];
+    player *target_player = &gameState->players[target];
+
     // 計算曼哈頓距離
     int dx = abs(attacker_player->locate[0] - target_player->locate[0]);
     int dy = abs(attacker_player->locate[1] - target_player->locate[1]);
-    
+
     // 返回是否在攻擊範圍內（射程為1）
     return (dx + dy) <= 1;
 }

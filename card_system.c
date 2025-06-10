@@ -115,7 +115,7 @@ CardType get_card_type(int32_t cardId)
     // 技能牌根據角色和效果類型判斷
     if (cardId >= 11 && cardId <= 134)
     {
-        int charId = (cardId - 11) / 12;   // 每個角色12張技能牌
+        // int charId = (cardId - 11) / 12;   // 每個角色12張技能牌，暫時未使用
         int skillType = (cardId - 11) % 3; // 每3張為一組（攻/防/移）
 
         switch (skillType)
@@ -300,4 +300,139 @@ int32_t required_ki(int32_t skillCard)
     if (!needs_ki(skillCard))
         return 0;
     return skillCard % 10; // 個位數表示需要的氣值
+}
+
+const char *get_card_name(int32_t cardId)
+{
+    switch (cardId)
+    {
+    // Basic cards
+    case 1:
+        return "LV1攻擊";
+    case 2:
+        return "LV2攻擊";
+    case 3:
+        return "LV3攻擊";
+    case 4:
+        return "LV1防禦";
+    case 5:
+        return "LV2防禦";
+    case 6:
+        return "LV3防禦";
+    case 7:
+        return "LV1移動";
+    case 8:
+        return "LV2移動";
+    case 9:
+        return "LV3移動";
+    case 10:
+        return "通用牌";
+
+    // Red Hood skills
+    case 11:
+        return "快速射擊";
+    case 12:
+        return "精準射擊";
+    case 13:
+        return "致命狙擊";
+    case 14:
+        return "能量護盾";
+    case 15:
+        return "電流護盾";
+    case 16:
+        return "終極護盾";
+    case 17:
+        return "彈道噴射";
+    case 18:
+        return "火力噴射";
+    case 19:
+        return "暴怒噴射";
+
+    // Snow White skills
+    case 23:
+        return "水晶碎片";
+    case 24:
+        return "水晶漩渦";
+    case 25:
+        return "水晶風暴";
+    case 26:
+        return "玷污的恩惠";
+    case 27:
+        return "玷污的盛筵";
+    case 28:
+        return "玷污的狂歡";
+    case 29:
+        return "破碎的幻想";
+    case 30:
+        return "破碎的現實";
+    case 31:
+        return "破碎的命運";
+
+    // Sleeping Beauty skills
+    case 35:
+        return "心靈震顫";
+    case 36:
+        return "心靈之怒";
+    case 37:
+        return "心靈狂怒";
+    case 38:
+        return "爆裂之鎖";
+    case 39:
+        return "爆裂之骨";
+    case 40:
+        return "爆裂之魂";
+    case 41:
+        return "黑暗碰觸";
+    case 42:
+        return "黑暗糾纏";
+    case 43:
+        return "黑暗絞殺";
+
+    // Alice skills
+    case 47:
+        return "開啟牌局";
+    case 48:
+        return "扭轉牌局";
+    case 49:
+        return "操控牌局";
+    case 50:
+        return "魔力技巧";
+    case 51:
+        return "精神幻術";
+    case 52:
+        return "帽子戲法";
+    case 53:
+        return "詭異的敏捷";
+    case 54:
+        return "詭異的隱蔽";
+    case 55:
+        return "詭異的詭異";
+
+    // Mulan skills
+    case 59:
+        return "不容小覷";
+    case 60:
+        return "勢不可擋";
+    case 61:
+        return "堅不可摧";
+    case 62:
+        return "以靜制動";
+    case 63:
+        return "以柔克剛";
+    case 64:
+        return "以弱勝強";
+    case 65:
+        return "永不退縮";
+    case 66:
+        return "毫不留情";
+    case 67:
+        return "絕不饒恕";
+
+    default:
+    {
+        static char buffer[32];
+        snprintf(buffer, sizeof(buffer), "Card_%d", cardId);
+        return buffer;
+    }
+    }
 }
