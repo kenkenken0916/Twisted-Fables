@@ -2,6 +2,7 @@
 #include <ncurses.h>
 #include <signal.h>
 #include <string.h>
+#include "architecture.h"
 
 volatile sig_atomic_t running = 1;
 
@@ -59,11 +60,11 @@ void draw_battlefield(game *gameState) {
 
     for (int i = 0; i < width; ++i) {
         char c = ' ';
-        if (i == gameState->player1.position && i == gameState->player2.position)
+        if (i == gameState->player1.locate[0] && i == gameState->player2.locate[0])
             c = 'X';
-        else if (i == gameState->player1.position)
+        else if (i == gameState->player1.locate[0])
             c = '1';
-        else if (i == gameState->player2.position)
+        else if (i == gameState->player2.locate[0])
             c = '2';
 
         mvwprintw(win, 2, 1 + i * 2, "%c", c);
@@ -72,10 +73,21 @@ void draw_battlefield(game *gameState) {
     wrefresh(win);
 }
 
-// 顯示玩家資訊（僅顯示基本狀態）
+// 顯示玩家資訊與手牌
 void draw_player_info(player *p, WINDOW *win, int row) {
-    mvwprintw(win, row, 1, "Player: %s", p->name);
-    mvwprintw(win, row + 1, 1, "HP: %2d  MP: %d  DEF: %d", p->hp, p->mp, p->def);
+    mvwprintw(win, row, 1, "Character: %d (Team %d)", p->character, p->team);
+    mvwprintw(win, row + 1, 1, "HP: %d/%d  DEF: %d/%d  EN: %d", 
+              p->life, p->maxlife, p->defense, p->maxdefense, p->energy);
+
+    mvwprintw(win, row + 2, 1, "Hand: ");
+    int show_count = p->hand.size < 5 ? p->hand.size : 5;
+    for (int i = 0; i < show_count; ++i) {
+        card *c = (card *)vector_get(&p->hand, i);
+        if (c && c->name)
+            wprintw(win, "[%s] ", c->name);
+        else
+            wprintw(win, "[?] ");
+    }
 }
 
 // 繪製整體畫面
@@ -93,10 +105,10 @@ void draw_game_screen(game *gameState) {
     // 畫戰場
     draw_battlefield(gameState);
 
-    // 畫玩家狀態
+    // 畫玩家狀態與手牌
     werase(tui->stat_win);
     box(tui->stat_win, 0, 0);
     draw_player_info(&gameState->player1, tui->stat_win, 1);
-    draw_player_info(&gameState->player2, tui->stat_win, 5);
+    draw_player_info(&gameState->player2, tui->stat_win, 7);
     wrefresh(tui->stat_win);
 }
