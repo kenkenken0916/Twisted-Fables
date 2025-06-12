@@ -1,7 +1,7 @@
 #include "tui.h"
 #include <ncurses.h>
 #include <signal.h>
-#include <unistd.h>
+#include <string.h>
 
 volatile sig_atomic_t running = 1;
 
@@ -44,54 +44,59 @@ void tui_cleanup(TUI *tui) {
     endwin();
 }
 
-void tui_draw_event_log(WINDOW *win, const char *log[], int log_size) {
-    werase(win);
-    box(win, 0, 0);
-    for (int i = 0; i < log_size; ++i) {
-        mvwprintw(win, i + 1, 1, "%s", log[i]);
-    }
-    wrefresh(win);
-}
+// 繪製戰場
+void draw_battlefield(game *gameState) {
+    TUI *tui = gameState->tui;
+    WINDOW *win = tui->pos_win;
+    int width = gameState->map_width;
 
-void tui_draw_positions(WINDOW *win, int width, int p1_pos, int p2_pos) {
     werase(win);
     box(win, 0, 0);
-    
-    // 顯示位置標題 (例如："0 1 2 3 4 5 6 7 8")
+
     for (int i = 0; i < width; ++i) {
         mvwprintw(win, 1, 1 + i * 2, "%d", i);
     }
-    
-    // 在第二列標記出玩家位置
+
     for (int i = 0; i < width; ++i) {
         char c = ' ';
-        if (i == p1_pos && i == p2_pos)
-            c = 'X';   // 兩個玩家同時在此位置
-        else if (i == p1_pos)
+        if (i == gameState->player1.position && i == gameState->player2.position)
+            c = 'X';
+        else if (i == gameState->player1.position)
             c = '1';
-        else if (i == p2_pos)
+        else if (i == gameState->player2.position)
             c = '2';
-        
+
         mvwprintw(win, 2, 1 + i * 2, "%c", c);
     }
+
     wrefresh(win);
 }
 
-void tui_draw_stats(WINDOW *win, int p1_hp, int p1_mp, int p1_def,
-                      int p2_hp, int p2_mp, int p2_def) {
-    werase(win);
-    box(win, 0, 0);
-    mvwprintw(win, 1, 1, "P1 HP: %2d  MP: %d  DEF: %d", p1_hp, p1_mp, p1_def);
-    mvwprintw(win, 2, 1, "P2 HP: %2d  MP: %d  DEF: %d", p2_hp, p2_mp, p2_def);
-    wrefresh(win);
+// 顯示玩家資訊（僅顯示基本狀態）
+void draw_player_info(player *p, WINDOW *win, int row) {
+    mvwprintw(win, row, 1, "Player: %s", p->name);
+    mvwprintw(win, row + 1, 1, "HP: %2d  MP: %d  DEF: %d", p->hp, p->mp, p->def);
 }
 
-void tui_update(TUI *tui, int width,
-                int p1_pos, int p2_pos,
-                int p1_hp, int p1_mp, int p1_def,
-                int p2_hp, int p2_mp, int p2_def,
-                const char *logs[], int log_size) {
-    tui_draw_event_log(tui->event_win, logs, log_size);
-    tui_draw_positions(tui->pos_win, width, p1_pos, p2_pos);
-    tui_draw_stats(tui->stat_win, p1_hp, p1_mp, p1_def, p2_hp, p2_mp, p2_def);
+// 繪製整體畫面
+void draw_game_screen(game *gameState) {
+    TUI *tui = gameState->tui;
+
+    // 畫事件紀錄
+    werase(tui->event_win);
+    box(tui->event_win, 0, 0);
+    for (int i = 0; i < gameState->log_size; ++i) {
+        mvwprintw(tui->event_win, i + 1, 1, "%s", gameState->logs[i]);
+    }
+    wrefresh(tui->event_win);
+
+    // 畫戰場
+    draw_battlefield(gameState);
+
+    // 畫玩家狀態
+    werase(tui->stat_win);
+    box(tui->stat_win, 0, 0);
+    draw_player_info(&gameState->player1, tui->stat_win, 1);
+    draw_player_info(&gameState->player2, tui->stat_win, 5);
+    wrefresh(tui->stat_win);
 }
