@@ -44,9 +44,6 @@ int main(void)
             break; // Game over or error
         }
 
-        // Update game state
-        transition_to_next_state(&gameState);
-
         // Check if game has ended
         if (check_game_end(&gameState))
         {

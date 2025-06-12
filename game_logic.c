@@ -75,7 +75,7 @@ void display_game_state(game *gs)
         printf("選擇行動 (0:專注 1:攻擊 2:防禦 3:移動 4:技能 5:特殊 6:購買 7:蛻變 8:特殊行動 9:丟棄毒牌 10:結束)");
         break;
     case USE_ATK:
-        printf("使用攻擊牌 (輸入卡牌編號1~4，0結束)");
+        printf("使用攻擊牌 (可輸入多張卡牌編號，以空格分隔，0結束)");
         break;
     case USE_DEF:
         printf("使用防禦牌 (輸入卡牌編號1~4，0結束)");
@@ -128,6 +128,7 @@ bool handle_player_choice(game *gs, int32_t player_choice)
             return true;
         }
         handle_choose_identity(gs, player_choice - 1); // Convert 1-based choice to 0-based CharacterID
+        transition_to_next_state(gs);                  // Transition after character selection
         break;
 
     case CHOOSE_MOVE:
@@ -141,44 +142,246 @@ bool handle_player_choice(game *gs, int32_t player_choice)
         break;
 
     case USE_ATK:
-        // Show attack cards
-        if (player_choice == 0)
+    {
+        char input[100];
+        int cards[10]; // Array to store card indices
+        int card_count = 0;
+        int total_damage = 0;
+        bool all_valid = true;
+
+        player *current = &gs->players[gs->now_turn_player_id];
+
+        // Get input string and parse numbers
+        fgets(input, sizeof(input), stdin);
+        if (input[0] == '0' || input[0] == '\n')
         {
             gs->status = CHOOSE_MOVE;
+            return true;
         }
-        else
+
+        // Parse multiple numbers from input
+        char *token = strtok(input, " \n");
+        while (token != NULL && card_count < 10)
         {
-            player *current = &gs->players[gs->now_turn_player_id];
-            if (player_choice > 0 && player_choice <= (int32_t)current->hand.SIZE)
+            cards[card_count] = atoi(token);
+            if (cards[card_count] <= 0 || cards[card_count] > (int32_t)current->hand.SIZE)
             {
-                handle_use_card(gs, player_choice);
+                printf("Invalid card choice: %d\n", cards[card_count]);
+                all_valid = false;
+                break;
             }
-            else
-            {
-                printf("Invalid card choice. Please choose a number between 0 and %d\n", current->hand.SIZE);
-            }
+            card_count++;
+            token = strtok(NULL, " \n");
         }
-        break;
+
+        if (all_valid && card_count > 0)
+        {
+            vector used_cards;
+            vector_init(&used_cards);
+
+            // Validate all cards first
+            for (int i = 0; i < card_count; i++)
+            {
+                int32_t cardId = current->hand.array[cards[i] - 1];
+                if (get_card_type(cardId) != CARD_TYPE_BASIC_ATK)
+                {
+                    printf("Card %d is not an attack card\n", cards[i]);
+                    all_valid = false;
+                    break;
+                }
+                vector_pushback(&used_cards, cards[i] - 1);
+                total_damage += get_card_value(cardId);
+            }
+
+            if (all_valid)
+            {
+                // Apply combined damage
+                int target_player = (gs->now_turn_player_id + 1) % 2;
+                apply_damage(gs, target_player, total_damage);
+                INFO_LOG("Player %d dealt %d total damage to Player %d",
+                         gs->now_turn_player_id + 1,
+                         total_damage,
+                         target_player + 1);
+
+                // Remove used cards in reverse order to maintain correct indices
+                for (int i = used_cards.SIZE - 1; i >= 0; i--)
+                {
+                    int32_t cardId = current->hand.array[used_cards.array[i]];
+                    vector_pushback(&current->usecards, cardId);
+                    eraseVector(&current->hand, used_cards.array[i]);
+                }
+                gs->status = CHOOSE_MOVE;
+                vector_destroy(&used_cards);
+                return true;
+            }
+            vector_destroy(&used_cards);
+        }
+
+        // Stay in USE_ATK state for invalid choices
+        display_available_cards(gs, is_attack_card);
+        printf("Enter card numbers separated by spaces (0 to cancel): ");
+    }
+    break;
 
     case USE_DEF:
-        // Show defense cards
-        if (player_choice == 0)
+    {
+        char input[100];
+        int cards[10]; // Array to store card indices
+        int card_count = 0;
+        int total_defense = 0;
+        bool all_valid = true;
+
+        player *current = &gs->players[gs->now_turn_player_id];
+
+        // Get input string and parse numbers
+        fgets(input, sizeof(input), stdin);
+        if (input[0] == '0' || input[0] == '\n')
         {
             gs->status = CHOOSE_MOVE;
+            return true;
         }
-        else
+
+        // Parse multiple numbers from input
+        char *token = strtok(input, " \n");
+        while (token != NULL && card_count < 10)
         {
-            player *current = &gs->players[gs->now_turn_player_id];
-            if (player_choice > 0 && player_choice <= (int32_t)current->hand.SIZE)
+            cards[card_count] = atoi(token);
+            if (cards[card_count] <= 0 || cards[card_count] > (int32_t)current->hand.SIZE)
             {
-                handle_use_card(gs, player_choice);
+                printf("Invalid card choice: %d\n", cards[card_count]);
+                all_valid = false;
+                break;
             }
-            else
-            {
-                printf("Invalid card choice. Please choose a number between 0 and %d\n", current->hand.SIZE);
-            }
+            card_count++;
+            token = strtok(NULL, " \n");
         }
-        break;
+
+        if (all_valid && card_count > 0)
+        {
+            vector used_cards;
+            vector_init(&used_cards);
+
+            // Validate all cards first
+            for (int i = 0; i < card_count; i++)
+            {
+                int32_t cardId = current->hand.array[cards[i] - 1];
+                if (get_card_type(cardId) != CARD_TYPE_BASIC_DEF)
+                {
+                    printf("Card %d is not a defense card\n", cards[i]);
+                    all_valid = false;
+                    break;
+                }
+                vector_pushback(&used_cards, cards[i] - 1);
+                total_defense += get_card_value(cardId);
+            }
+
+            if (all_valid)
+            {
+                // Apply combined defense
+                current->defense = total_defense;
+                INFO_LOG("Player %d gained %d total defense",
+                         gs->now_turn_player_id + 1,
+                         total_defense);
+
+                // Remove used cards in reverse order to maintain correct indices
+                for (int i = used_cards.SIZE - 1; i >= 0; i--)
+                {
+                    int32_t cardId = current->hand.array[used_cards.array[i]];
+                    vector_pushback(&current->usecards, cardId);
+                    eraseVector(&current->hand, used_cards.array[i]);
+                }
+                gs->status = CHOOSE_MOVE;
+                vector_destroy(&used_cards);
+                return true;
+            }
+            vector_destroy(&used_cards);
+        }
+
+        // Stay in USE_DEF state for invalid choices
+        display_available_cards(gs, is_defense_card);
+        printf("Enter card numbers separated by spaces (0 to cancel): ");
+    }
+    break;
+
+    case USE_MOV:
+    {
+        char input[100];
+        int cards[10]; // Array to store card indices
+        int card_count = 0;
+        int total_movement = 0;
+        bool all_valid = true;
+
+        player *current = &gs->players[gs->now_turn_player_id];
+
+        // Get input string and parse numbers
+        fgets(input, sizeof(input), stdin);
+        if (input[0] == '0' || input[0] == '\n')
+        {
+            gs->status = CHOOSE_MOVE;
+            return true;
+        }
+
+        // Parse multiple numbers from input
+        char *token = strtok(input, " \n");
+        while (token != NULL && card_count < 10)
+        {
+            cards[card_count] = atoi(token);
+            if (cards[card_count] <= 0 || cards[card_count] > (int32_t)current->hand.SIZE)
+            {
+                printf("Invalid card choice: %d\n", cards[card_count]);
+                all_valid = false;
+                break;
+            }
+            card_count++;
+            token = strtok(NULL, " \n");
+        }
+
+        if (all_valid && card_count > 0)
+        {
+            vector used_cards;
+            vector_init(&used_cards);
+
+            // Validate all cards first
+            for (int i = 0; i < card_count; i++)
+            {
+                int32_t cardId = current->hand.array[cards[i] - 1];
+                if (get_card_type(cardId) != CARD_TYPE_BASIC_MOV)
+                {
+                    printf("Card %d is not a movement card\n", cards[i]);
+                    all_valid = false;
+                    break;
+                }
+                vector_pushback(&used_cards, cards[i] - 1);
+                total_movement += get_card_value(cardId);
+            }
+
+            if (all_valid)
+            {
+                // Apply combined movement
+                gs->nowMOV = total_movement;
+                INFO_LOG("Player %d gained %d total movement points",
+                         gs->now_turn_player_id + 1,
+                         total_movement);
+
+                // Remove used cards in reverse order to maintain correct indices
+                for (int i = used_cards.SIZE - 1; i >= 0; i--)
+                {
+                    int32_t cardId = current->hand.array[used_cards.array[i]];
+                    vector_pushback(&current->usecards, cardId);
+                    eraseVector(&current->hand, used_cards.array[i]);
+                }
+                gs->status = CHOOSE_MOVE;
+                vector_destroy(&used_cards);
+                return true;
+            }
+            vector_destroy(&used_cards);
+        }
+
+        // Stay in USE_MOV state for invalid choices
+        display_available_cards(gs, is_move_card);
+        printf("Enter card numbers separated by spaces (0 to cancel): ");
+    }
+    break;
 
     case BUY_CARD_TYPE:
         if (!handle_buy_card(gs, player_choice))
@@ -204,9 +407,17 @@ void handle_choose_identity(game *gs, int8_t ch)
     DEBUG_LOG("Handling character choice: Player=%d, Character=%d",
               gs->now_turn_player_id, ch);
 
-    // Add a flag in the player struct to track if character has been selected
+    // Validate input character ID
+    if (ch < 0 || ch > 9)
+    {
+        ERROR_LOG("Invalid character ID: %d", ch);
+        return;
+    }
+
+    // Check if current player already has a character
     if (gs->players[gs->now_turn_player_id].character != UINT8_MAX)
     {
+        ERROR_LOG("Player %d already has a character", gs->now_turn_player_id + 1);
         return;
     }
 
@@ -217,22 +428,25 @@ void handle_choose_identity(game *gs, int8_t ch)
     if (gs->players[gs->now_turn_player_id].character == UINT8_MAX)
     {
         ERROR_LOG("Character initialization failed for player %d", gs->now_turn_player_id + 1);
-        printf("Character selection failed\n");
+        printf("Character selection failed. Please try again.\n");
         return;
     }
 
     INFO_LOG("Player %d chose character %d", gs->now_turn_player_id + 1, ch);
 
+    // After Player 1 successfully chooses, switch to Player 2
     if (gs->now_turn_player_id == 0)
     {
-        // After Player 1 successfully chooses, switch to Player 2
         gs->now_turn_player_id = 1;
+        printf("\nPlayer 2's turn to choose a character\n");
+        display_character_selection();
     }
+    // After Player 2 chooses, start the game
     else if (gs->now_turn_player_id == 1)
     {
-        // After Player 2 chooses, start the game
         gs->status = CHOOSE_MOVE;
         gs->now_turn_player_id = 0;
+        printf("\nBoth players have chosen their characters. Starting the game!\n");
         initial_draw(gs);
     }
 }
@@ -250,23 +464,27 @@ void handle_choose_move(game *gs, int32_t move_choice)
     case 1: // Use Attack Card
         gs->status = USE_ATK;
         // Display available attack cards
-        printf("Choose attack card to use (1-%d, 0 to cancel):\n", gs->players[gs->now_turn_player_id].hand.SIZE);
-        break;
+        display_available_cards(gs, is_attack_card);
+        printf("Enter card numbers separated by spaces (0 to cancel): ");
+        return;
     case 2: // Use Defense Card
         gs->status = USE_DEF;
         // Display available defense cards
-        printf("Choose defense card to use (1-%d, 0 to cancel):\n", gs->players[gs->now_turn_player_id].hand.SIZE);
-        break;
+        display_available_cards(gs, is_defense_card);
+        printf("Enter card number (0 to cancel): ");
+        return;
     case 3: // Use Move Card
         gs->status = USE_MOV;
         // Display available move cards
-        printf("Choose move card to use (1-%d, 0 to cancel):\n", gs->players[gs->now_turn_player_id].hand.SIZE);
-        break;
+        display_available_cards(gs, is_move_card);
+        printf("Enter card number (0 to cancel): ");
+        return;
     case 4: // Use Skill Card
         gs->status = USE_SKILL;
         // Display available skill cards
-        printf("Choose skill card to use (1-%d, 0 to cancel):\n", gs->players[gs->now_turn_player_id].hand.SIZE);
-        break;
+        display_available_cards(gs, is_skill_card);
+        printf("Enter card number (0 to cancel): ");
+        return;
     case 10: // End turn
         DEBUG_LOG("Ending turn for player %d", gs->now_turn_player_id + 1);
         end_turn(gs);
@@ -319,6 +537,7 @@ void handle_use_card(game *gs, int32_t card_idx)
         else
         {
             printf("This is not an attack card\n");
+            gs->status = CHOOSE_MOVE; // Return to choose move state on invalid card
         }
         break;
 
@@ -331,6 +550,7 @@ void handle_use_card(game *gs, int32_t card_idx)
         else
         {
             printf("This is not a defense card\n");
+            gs->status = CHOOSE_MOVE; // Return to choose move state on invalid card
         }
         break;
 
@@ -343,6 +563,7 @@ void handle_use_card(game *gs, int32_t card_idx)
         else
         {
             printf("This is not a move card\n");
+            gs->status = CHOOSE_MOVE; // Return to choose move state on invalid card
         }
         break;
 
@@ -358,6 +579,18 @@ void handle_use_card(game *gs, int32_t card_idx)
         // Move card from hand to used cards
         vector_pushback(&current->usecards, cardId);
         eraseVector(&current->hand, card_idx - 1);
+
+        // Apply attack damage to opponent if this was an attack card
+        if (type == CARD_TYPE_BASIC_ATK)
+        {
+            int target_player = (gs->now_turn_player_id + 1) % 2; // Get opponent's index
+            apply_damage(gs, target_player, get_card_value(cardId));
+            INFO_LOG("Player %d dealt %d damage to Player %d",
+                     gs->now_turn_player_id + 1,
+                     get_card_value(cardId),
+                     target_player + 1);
+        }
+
         // Return to choose move state
         gs->status = CHOOSE_MOVE;
     }
