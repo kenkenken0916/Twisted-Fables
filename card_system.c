@@ -428,6 +428,257 @@ const char *get_card_name(int32_t cardId)
     case 67:
         return "絕不饒恕";
 
+        case 68:
+        return "氣沖雲霄";
+    case 69:
+        return "直面混沌";
+    case 70:
+        return "雷霆一擊";
+
+    // 輝夜姬
+    case 71:
+        return "領悟的光芒";
+    case 72:
+        return "領悟的榮耀";
+    case 73:
+        return "領悟的化身";
+    case 74:
+        return "困惑的回聲";
+    case 75:
+        return "久遠的回響";
+    case 76:
+        return "神性的召換";
+    case 77:
+        return "專注的自省";
+    case 78:
+        return "頓悟的決心";
+    case 79:
+        return "痛徹的淨化";
+    case 80:
+        return "炙熱的竹刀";
+    case 81:
+        return "注定的審判";
+    case 82:
+        return "躁動的血性";
+
+    // 美人魚
+    case 83:
+        return "海妖的召喚";
+    case 84:
+        return "海妖的歌聲";
+    case 85:
+        return "海妖的尖嘯";
+    case 86:
+        return "洶湧之怒";
+    case 87:
+        return "噴薄之怒";
+    case 88:
+        return "復仇之怒";
+    case 89:
+        return "深淵的蠶食";
+    case 90:
+        return "深淵的入侵";
+    case 91:
+        return "深淵的征服";
+    case 92:
+        return "人魚復興";
+    case 93:
+        return "遠古甦醒";
+    case 94:
+        return "淨化之潮";
+
+    // 火柴女孩
+    case 95:
+        return "虛幻的願望";
+    case 96:
+        return "隱密的期望";
+    case 97:
+        return "無厭的奢望";
+    case 98:
+        return "惡魔的祭品";
+    case 99:
+        return "惡魔的賭注";
+    case 100:
+        return "惡魔的契約";
+    case 101:
+        return "失重的靈魂";
+    case 102:
+        return "虧欠的靈魂";
+    case 103:
+        return "殘破的靈魂";
+    case 104:
+        return "地獄烈焰";
+    case 105:
+        return "厄運降臨";
+    case 106:
+        return "貪婪詛咒";
+
+    // 桃樂絲
+    case 107:
+        return "目標確認";
+    case 108:
+        return "目標鎖定";
+    case 109:
+        return "目標清除";
+    case 110:
+        return "思想刺探";
+    case 111:
+        return "深度搜索";
+    case 112:
+        return "讀取完畢";
+    case 113:
+        return "發現敵蹤";
+    case 114:
+        return "進入視野";
+    case 115:
+        return "使命終結";
+    case 116:
+        return "獅子";
+    case 117:
+        return "鐵皮人";
+    case 118:
+        return "稻草人";
+
+    // 山魯佐德
+    case 119:
+        return "消除夢境";
+    case 120:
+        return "銷毀記憶";
+    case 121:
+        return "扼殺存在";
+    case 122:
+        return "浸沒之網";
+    case 123:
+        return "沈迷之網";
+    case 124:
+        return "消融之網";
+    case 125:
+        return "監視之眼";
+    case 126:
+        return "操縱之手";
+    case 127:
+        return "支配之腦";
+    case 128:
+        return "系統刪除";
+    case 129:
+        return "無法自拔";
+    case 130:
+        return "切斷通路";
+
+    // 中毒/火柴
+    case 131:
+        return "中毒1";
+    case 132:
+        return "中毒2";
+    case 133:
+        return "中毒3";
+    case 134:
+        return "火柴";
+
+    // 蛻變卡 - 小紅帽
+    case 135:
+        return "過載燃燒";
+    case 136:
+        return "兜帽系統";
+    case 137:
+        return "變異感應";
+    case 138:
+        return "板載緩存";
+
+    // 蛻變卡 - 白雪公主
+    case 139:
+        return "水晶之棺";
+    case 140:
+        return "墮落之劫";
+    case 141:
+        return "劇毒之蝕";
+    case 142:
+        return "至純之毒";
+
+    // 蛻變卡 - 睡美人
+    case 143:
+        return "放血療法";
+    case 144:
+        return "血祭之禮";
+    case 145:
+        return "精神屏障";
+    case 146:
+        return "強制治療";
+
+    // 蛻變卡 - 愛麗絲
+    case 147:
+        return "砍掉她的頭";
+    case 148:
+        return "仙境降臨";
+    case 149:
+        return "我們全是瘋子";
+    case 150:
+        return "開始我的表演";
+
+    // 蛻變卡 - 花木蘭
+    case 151:
+        return "氣慣全身";
+    case 152:
+        return "主宰命運";
+    case 153:
+        return "長驅直入";
+    case 154:
+        return "暴風前夕";
+
+    // 蛻變卡 - 輝夜姬
+    case 155:
+        return "懲戒時刻";
+    case 156:
+        return "血色月光";
+    case 157:
+        return "靈性本能";
+    case 158:
+        return "月下沉思";
+
+    // 蛻變卡 - 美人魚
+    case 159:
+        return "暴風之蝕";
+    case 160:
+        return "神秘共鳴";
+    case 161:
+        return "海的女兒";
+    case 162:
+        return "暗潮湧動";
+
+    // 蛻變卡 - 火柴女孩
+    case 163:
+        return "痛苦的儀式";
+    case 164:
+        return "放縱的渴望";
+    case 165:
+        return "魔鬼的凝視";
+    case 166:
+        return "火焰的捉弄";
+    case 167:
+        return "欲望的捉弄";
+    case 168:
+        return "命運的捉弄";
+
+    // 蛻變卡 - 桃樂絲
+    case 169:
+        return "殺戮指令";
+    case 170:
+        return "超越機器";
+    case 171:
+        return "獲准極刑";
+    case 172:
+        return "無所遁形";
+
+    // 蛻變卡 - 山魯佐德
+    case 173:
+        return "命運之手";
+    case 174:
+        return "改寫欲望";
+    case 175:
+        return "重組思想";
+    case 176:
+        return "童話編織者";
+        
     default:
     {
         static char buffer[32];
