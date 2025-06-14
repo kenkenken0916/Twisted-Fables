@@ -73,20 +73,19 @@ void draw_battlefield(game *gameState) {
     wrefresh(win);
 }
 
-// 顯示玩家資訊與手牌
-void draw_player_info(player *p, WINDOW *win, int row) {
-    mvwprintw(win, row, 1, "Character: %d (Team %d)", p->character, p->team);
-    mvwprintw(win, row + 1, 1, "HP: %d/%d  DEF: %d/%d  EN: %d", 
+// 顯示玩家資訊與所有手牌（不分頁）
+void draw_player_info(player *p, WINDOW *win, int row, int col) {
+    mvwprintw(win, row, col, "Character: %d (Team %d)", p->character, p->team);
+    mvwprintw(win, row + 1, col, "HP: %d/%d  DEF: %d/%d  EN: %d",
               p->life, p->maxlife, p->defense, p->maxdefense, p->energy);
 
-    mvwprintw(win, row + 2, 1, "Hand: ");
-    int show_count = p->hand.size < 5 ? p->hand.size : 5;
-    for (int i = 0; i < show_count; ++i) {
+    mvwprintw(win, row + 2, col, "Hand (%d):", p->hand.size);
+    for (int i = 0; i < p->hand.size; ++i) {
         card *c = (card *)vector_get(&p->hand, i);
         if (c && c->name)
-            wprintw(win, "[%s] ", c->name);
+            mvwprintw(win, row + 3 + i, col, "- [%s]", c->name);
         else
-            wprintw(win, "[?] ");
+            mvwprintw(win, row + 3 + i, col, "- [?]");
     }
 }
 
@@ -97,7 +96,7 @@ void draw_game_screen(game *gameState) {
     // 畫事件紀錄
     werase(tui->event_win);
     box(tui->event_win, 0, 0);
-    for (int i = 0; i < gameState->log_size; ++i) {
+    for (int i = 0; i < gameState->log_size && i + 1 < tui->height - 1; ++i) {
         mvwprintw(tui->event_win, i + 1, 1, "%s", gameState->logs[i]);
     }
     wrefresh(tui->event_win);
@@ -105,10 +104,23 @@ void draw_game_screen(game *gameState) {
     // 畫戰場
     draw_battlefield(gameState);
 
-    // 畫玩家狀態與手牌
+    // 畫玩家狀態與完整手牌
     werase(tui->stat_win);
     box(tui->stat_win, 0, 0);
-    draw_player_info(&gameState->player1, tui->stat_win, 1);
-    draw_player_info(&gameState->player2, tui->stat_win, 7);
+
+    int half_width = COLS / 2;
+
+    mvwprintw(tui->stat_win, 0, 2, "Player 1");
+    mvwprintw(tui->stat_win, 0, half_width + 2, "Player 2");
+
+    // 畫中線分隔
+    for (int i = 1; i < LINES - 2 * tui->height - 1; ++i) {
+        mvwprintw(tui->stat_win, i, half_width, "|");
+    }
+
+    // 雙方分別在左右欄顯示
+    draw_player_info(&gameState->player1, tui->stat_win, 1, 2);
+    draw_player_info(&gameState->player2, tui->stat_win, 1, half_width + 2);
+
     wrefresh(tui->stat_win);
 }
