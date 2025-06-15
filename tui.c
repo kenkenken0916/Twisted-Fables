@@ -10,12 +10,49 @@ static void handle_sigint(int sig) {
     running = 0;
 }
 
+short get_card_color(int id) {
+    if (id < 10) {
+        int section = (id - 1) / 3;
+        if (section == 0) return COLOR_YELLOW;
+        if (section == 1) return COLOR_BLUE;
+        if (section == 2) return COLOR_RED;
+    } else if (id == 10) {
+        return COLOR_YELLOW;
+    } else if (id <= 130) {
+        int block = (id - 10) / 10;
+        if (block < 10) {
+            int type = block % 3;
+            if (type == 0) return COLOR_YELLOW;
+            if (type == 1) return COLOR_BLUE;
+            if (type == 2) return COLOR_RED;
+        } else {
+            return COLOR_MAGENTA; // rainbow
+        }
+    } else if (id == 131 || id == 134) {
+        return COLOR_YELLOW;
+    } else if (id == 132) {
+        return COLOR_BLUE;
+    } else if (id == 133) {
+        return COLOR_RED;
+    }
+    return COLOR_WHITE;
+}
+
 int tui_init(TUI *tui) {
     signal(SIGINT, handle_sigint);
     initscr();
     noecho();
     cbreak();
     curs_set(0);
+
+    start_color();
+    use_default_colors();
+    init_pair(1, COLOR_YELLOW, -1);
+    init_pair(2, COLOR_BLUE, -1);
+    init_pair(3, COLOR_RED, -1);
+    init_pair(4, COLOR_WHITE, -1);
+    init_pair(5, COLOR_GREEN, -1);
+    init_pair(6, COLOR_MAGENTA, -1);
 
     tui->height = LINES / DEFAULT_HEIGHT_DIVIDER;
     tui->event_win = newwin(tui->height, COLS, 0, 0);
@@ -79,22 +116,28 @@ void draw_player_info(player *p, WINDOW *win, int row, int col) {
 
     mvwprintw(win, row + 2, col, "Hand (%d):", p->hand.size);
 
-    int max_hand = p->hand.size;
-    if (max_hand > 12) max_hand = 12;  // 上限 12 張手牌
+    int max_hand = p->hand.size > 12 ? 12 : p->hand.size;
 
     for (int i = 0; i < max_hand; ++i) {
         card *c = (card *)vector_get(&p->hand, i);
-        if (c && c->name)
-            mvwprintw(win, row + 3 + i, col, "- [%s]", c->name);
-        else
-            mvwprintw(win, row + 3 + i, col, "- [?]");
+        int cid = c ? c->id : -1;
+        short color = get_card_color(cid);
+
+        short pair = (color == COLOR_YELLOW) ? 1 :
+                     (color == COLOR_BLUE) ? 2 :
+                     (color == COLOR_RED) ? 3 :
+                     (color == COLOR_GREEN) ? 5 :
+                     (color == COLOR_MAGENTA) ? 6 : 4;
+
+        wattron(win, COLOR_PAIR(pair));
+        mvwprintw(win, row + 3 + i, col, "- [%s]", (c && c->name) ? c->name : "?");
+        wattroff(win, COLOR_PAIR(pair));
     }
 }
 
 void draw_game_screen(game *gameState) {
     TUI *tui = gameState->tui;
 
-    // 事件紀錄視窗
     werase(tui->event_win);
     box(tui->event_win, 0, 0);
     for (int i = 0; i < gameState->log_size && i + 1 < tui->height - 1; ++i) {
@@ -102,10 +145,8 @@ void draw_game_screen(game *gameState) {
     }
     wrefresh(tui->event_win);
 
-    // 戰場視窗
     draw_battlefield(gameState);
 
-    // 狀態與手牌視窗
     werase(tui->stat_win);
     box(tui->stat_win, 0, 0);
 
@@ -114,7 +155,6 @@ void draw_game_screen(game *gameState) {
     mvwprintw(tui->stat_win, 0, 2, "Player 1");
     mvwprintw(tui->stat_win, 0, half_width + 2, "Player 2");
 
-    // 中線分隔
     for (int i = 1; i < LINES - 2 * tui->height - 1; ++i) {
         mvwprintw(tui->stat_win, i, half_width, "|");
     }
