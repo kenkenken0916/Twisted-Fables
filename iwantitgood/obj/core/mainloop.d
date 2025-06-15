@@ -1,0 +1,7 @@
+obj/core/mainloop.o: src/core/mainloop.c src/core/mainloop.h \
+ src/core/../../architecture.h src/core/../../vector.h \
+ src/core/game_logic.h src/core/game_init.h src/core/game_state.h \
+ src/core/../systems/card_system.h \
+ src/core/../systems/../../architecture.h \
+ src/core/../systems/character_system.h src/core/../utils/debug_log.h \
+ src/core/../utils/utils.h src/core/../utils/../../architecture.h
