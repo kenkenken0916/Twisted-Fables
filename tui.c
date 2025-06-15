@@ -45,7 +45,6 @@ void tui_cleanup(TUI *tui) {
     endwin();
 }
 
-// 繪製戰場
 void draw_battlefield(game *gameState) {
     TUI *tui = gameState->tui;
     WINDOW *win = tui->pos_win;
@@ -73,14 +72,17 @@ void draw_battlefield(game *gameState) {
     wrefresh(win);
 }
 
-// 顯示玩家資訊與所有手牌（不分頁）
 void draw_player_info(player *p, WINDOW *win, int row, int col) {
     mvwprintw(win, row, col, "Character: %d (Team %d)", p->character, p->team);
     mvwprintw(win, row + 1, col, "HP: %d/%d  DEF: %d/%d  EN: %d",
               p->life, p->maxlife, p->defense, p->maxdefense, p->energy);
 
     mvwprintw(win, row + 2, col, "Hand (%d):", p->hand.size);
-    for (int i = 0; i < p->hand.size; ++i) {
+
+    int max_hand = p->hand.size;
+    if (max_hand > 12) max_hand = 12;  // 上限 12 張手牌
+
+    for (int i = 0; i < max_hand; ++i) {
         card *c = (card *)vector_get(&p->hand, i);
         if (c && c->name)
             mvwprintw(win, row + 3 + i, col, "- [%s]", c->name);
@@ -89,11 +91,10 @@ void draw_player_info(player *p, WINDOW *win, int row, int col) {
     }
 }
 
-// 繪製整體畫面
 void draw_game_screen(game *gameState) {
     TUI *tui = gameState->tui;
 
-    // 畫事件紀錄
+    // 事件紀錄視窗
     werase(tui->event_win);
     box(tui->event_win, 0, 0);
     for (int i = 0; i < gameState->log_size && i + 1 < tui->height - 1; ++i) {
@@ -101,10 +102,10 @@ void draw_game_screen(game *gameState) {
     }
     wrefresh(tui->event_win);
 
-    // 畫戰場
+    // 戰場視窗
     draw_battlefield(gameState);
 
-    // 畫玩家狀態與完整手牌
+    // 狀態與手牌視窗
     werase(tui->stat_win);
     box(tui->stat_win, 0, 0);
 
@@ -113,12 +114,11 @@ void draw_game_screen(game *gameState) {
     mvwprintw(tui->stat_win, 0, 2, "Player 1");
     mvwprintw(tui->stat_win, 0, half_width + 2, "Player 2");
 
-    // 畫中線分隔
+    // 中線分隔
     for (int i = 1; i < LINES - 2 * tui->height - 1; ++i) {
         mvwprintw(tui->stat_win, i, half_width, "|");
     }
 
-    // 雙方分別在左右欄顯示
     draw_player_info(&gameState->player1, tui->stat_win, 1, 2);
     draw_player_info(&gameState->player2, tui->stat_win, 1, half_width + 2);
 
