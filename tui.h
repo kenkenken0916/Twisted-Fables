@@ -2,9 +2,11 @@
 #define TUI_H
 
 #include <ncurses.h>
-#include "game.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <signal.h>
 
-#define DEFAULT_HEIGHT_DIVIDER 6
+#define DEFAULT_HEIGHT_DIVIDER 3
 
 typedef struct {
     WINDOW *event_win;
@@ -13,11 +15,33 @@ typedef struct {
     int height;
 } TUI;
 
-int tui_init(TUI *tui);
-void tui_cleanup(TUI *tui);
+typedef struct _card {
+    int id;
+    char *name;
+} card;
 
-void draw_game_screen(game *gameState);      // 繪製遊戲畫面
-void draw_battlefield(game *gameState);      // 繪製戰場
-void draw_player_info(player *p, WINDOW *win, int row);  // 顯示玩家資訊
+typedef struct _player player;
+
+extern volatile sig_atomic_t running;
+
+// initialization and cleanup
+int tui_init();
+void tui_cleanup();
+
+// log
+void tui_add_log(const char* message);
+void tui_clear_logs();
+
+// functions to draw game elements
+void draw_battlefield(player* players, int battlefield_width);
+void draw_player_info(player *p, WINDOW *win, int row, int col, int player_id);
+void draw_event_logs();
+void draw_game_screen(player* players, int battlefield_width);
+
+// tool functions
+short get_card_color(int id);
+void tui_refresh();
+bool tui_is_initialized();
+TUI* tui_get_instance();
 
 #endif
